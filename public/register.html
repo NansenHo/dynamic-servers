@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+    <title>注册</title>
+</head>
+<body>
+    <form id="registerForm">
+        <div>
+            <label>用户名<input type="text" name="name"></label>
+        </div>
+        <div>
+            <label>密码<input type="password" name="password"></label>
+        </div>
+        <div>
+            <button type="submit">注册</button>
+        </div>
+    </form>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        const $form = $('#registerForm')
+        // 监听 form 的 submit 事件
+        $form.on('submit',(e)=>{
+            e.preventDefault()// 阻止默认事件（第一步）如果不阻止，会自动刷新页面
+            // 获取用户填的用户名和密码
+            const name = $form.find('input[name=name]').val()
+            const password = $form.find('input[name=password]').val()
+            console.log(name, password) 
+            $.ajax({
+                method: 'POST',
+                url: '/register',
+                contentType: 'text/json; charset=UTF-8', 
+                // 将我们的 Request Headers 里的 Content-Type 改成了 text/json
+                data: JSON.stringify({name, password})
+            })
+        })
+    </script>
+</body>
+</html>
