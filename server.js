@@ -21,9 +21,45 @@ var server = http.createServer(function(request, response){
 
   console.log('有个傻子发请求过来啦！路径（带查询参数）为：' + pathWithQuery)
 
-  if(path === '/register' && method === 'POST'){
+  if(path === '/sign_in' && method === 'POST'){
+    const userArray = JSON.parse(fs.readFileSync('./db/users.json'))
+    const array = [] // 因为数据可能是分段上传的，所以要用数组。
+    request.on('data',chunk=>{
+        array.push(chunk) // chunk 就是一段数据
+    }) // data 就是上传事件
+    request.on('end', ()=>{ // 结束
+        const string = Buffer.concat(array).toString()
+        // Buffer : 把不同数据合成一个字符串
+        const obj = JSON.parse(string) // 有 name password
+        const user = userArray.find(
+          user => user.name === obj.name && user.password === obj.password)
+        if(user === undefined){
+          response.statusCode = 400
+          response.setHeader('Content-Type', 'text/json; charset=utf-8') // 告诉浏览器这个内容是 JSON
+          response.end(`{"errorCode": 4001}`) // return JSON
+          // 每个公司都应该有自己的一个 errorCode 编码，自己在文档中规定
+        } else{
+          response.statusCode = 200
+          response.setHeader('Set-Cookie', 'logined=1') // 你登录成功就给你一个 Cookie 
+          response.end()
+        }
+    })
+  } else if(path === '/home.html'){
+    const cookie = request.headers['cookie'] // 读取 Cookie ，忘了怎么读取，可以去 node.js 中文官网上找，在 http 里面
+    if(cookie === 'logined=1'){
+      const homeHtml = fs.readFileSync('./public/home.html').toString() // 替换 home 文件的内容
+      // FileReaderSync接口允许以同步的方式读取File或Blob对象中的内容。
+      // 得到文件了，记得 toString() 一下，因为其默认不是 toString
+      const string = homeHtml.replace('{{loginStatus}}', '已登陆') // replace() 方法返回一个由替换值（replacement）替换部分或所有的模式（pattern）匹配项后的新字符串。
+      response.write(string)
+    }else {
+      const homeHtml = fs.readFileSync('./public/home.html').toString()
+      const string = homeHtml.replace('{{loginStatus}}', 'balabala登陆')
+      response.write(string)
+    }
+  } else if(path === '/register' && method === 'POST'){
     response.setHeader('Content-Type', 'text/html; charset=utf-8')
-    const uesrArray = JSON.parse(fs.readFileSync('./db/users.json'))
+    const userArray = JSON.parse(fs.readFileSync('./db/users.json'))
     const array = [] // 因为数据可能是分段上传的，所以要用数组。
     request.on('data',chunk=>{
         array.push(chunk) // chunk 就是一段数据

@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-    <title>注册</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录</title>
 </head>
 <body>
-    <form id="registerForm">
+    <form id="signInForm">
         <div>
             <label>用户名<input type="text" name="name"></label>
         </div>
@@ -14,12 +14,12 @@
             <label>密码<input type="password" name="password"></label>
         </div>
         <div>
-            <button type="submit">注册</button>
+            <button type="submit">登录</button>
         </div>
     </form>
     <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-        const $form = $('#registerForm')
+        const $form = $('#signInForm')
         // 监听 form 的 submit 事件
         $form.on('submit',(e)=>{
             e.preventDefault()// 阻止默认事件（第一步）如果不阻止，会自动刷新页面
@@ -29,13 +29,13 @@
             console.log(name, password) 
             $.ajax({
                 method: 'POST',
-                url: '/register',
+                url: '/sign_in',
                 contentType: 'text/json; charset=UTF-8', 
                 // 将我们的 Request Headers 里的 Content-Type 改成了 text/json
                 data: JSON.stringify({name, password})
             }).then(()=>{
-                alert('注册成功') // alert 显示一个警告对话框,上面显示有指定的文本内容以及一个"确定"按钮。
-                location.href = '/sign_in.html' // 也可以用 window.open
+                alert('登录成功') // alert 显示一个警告对话框,上面显示有指定的文本内容以及一个"确定"按钮。
+                location.href = '/home.html' // 也可以用 window.open
             }, ()=>{}) // 第一个函数是成功之后，第二个是失败之后
         })
     </script>
